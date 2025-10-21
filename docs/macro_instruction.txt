@@ -1,0 +1,50 @@
+  The method realized in this macro is described in details in the report.pdf file.
+  It is necessary to get acquainted with this document to understand what happens inside functions.
+
+  For using this macro, it is important to know that data handling is performed in the following stages:
+  1) Finding noises threshold for each stip of an explored sensor. A file with threshold list is stored on disk and 
+     is required for the next stages.
+
+  2) Multiplicity selection by cutting events by thresholds found on stage 1). A root-file with multiplicity-selected
+     data is stored on disk is required for the next stages
+  3) The calibration procedure.
+
+  As a result of the execution of each stage, we get resulting files that are stored 
+  in ./result folder (in the directory where the macro is executed).
+
+  The hierarchy of resulting files is the folowing:
+  ./results
+  |
+  --[RAW_FILE_NAME]/ (e.g "alltel_65_s1to8")
+    |
+    --[SENSOR_NAME_1]/ (e.g. "SSD_20u_1")
+      | 
+      -- tmpHists/ # temporary spectra with TSpectrum marks where peaks were found
+        |
+        -- tmpHist_[RAW_FILE_NAME]_[STRIP_NB].root # spectrum of STRIP_NB-th strip during peak finding
+      -- canvases/ # canvases with results of the multiplicity selection, calibrated spectra and raw spectra prewiew
+        |
+        -- calibrated_[RAW_FILE_NAME]_[SENSOR_NAME_1].root # calibrated canvases of the raw data 
+        -- multSelected_[RAW_FILE_NAME]_[SENSOR_NAME_1].root # sensor spectra after multiplicity selection 
+
+      -- estimateDeadHist_[EXP_FILE_NAME]_[SENSOR_NAME_1].root # dead layer thicknesses by strips in [um]
+      -- calibCoeff_[EXP_FILE_NAME]_[SENSOR_NAME_1].root # calibration coefficients. The first column 
+                                                         # in a file is a-coefficient, the second --- b-coefficient
+                                                         # in the formula E = aN + b.
+      -- calibCoeff_[EXP_FILE_NAME]_[SENSOR_NAME_1]_rev.root # calibration coefficients. The first column 
+                                                         # in a file is b-coefficient, the second --- a-coefficient
+      -- report_[EXP_FILE_NAME]_[SENSOR_NAME_1].txt # file summarises information about calibration run 
+      -- multSelected_[RAW_FILE_NAME]_[SENSOR_NAME_1].root # multiplicity selected data 
+      -- channelsHist_[LOW|MIDDLE|HIGH]_[EXP_FILE_NAME]_[SENSOR_NAME_1].root # amplitude of found peaks (LOW|MIDDLE|HIGH or middle energy) in ADC-channels dimentionality
+      -- rmsHist_[LOW|MIDDLE|HIGH]_[EXP_FILE_NAME]_[SENSOR_NAME_1].root # RMS of found peaks (LOW|MIDDLE|HIGH or middle energy)
+      -- thresholds_[EXP_FILE_NAME]_[SENSOR_NAME_1].txt # noise thresholds in a raw data
+      -- calibPeaks_[EXP_FILE_NAME]_[SENSOR_NAME_1].txt # peak amplitudes in [MeV] after calibration
+      -- etaHist_[EXP_FILE_NAME]_[SENSOR_NAME_1].txt          # "information for experts" 
+         rmsDivDeltaPeaks_[EXP_FILE_NAME]_[SENSOR_NAME_1].txt # 
+  ...
+    |
+    --[SENSOR_NAME_N] (e.g. "SSD_1m_2")
+       ...
+  ...
+
+  Each next stage can be done with using of results of previous ones. If prerequisite stages have adequate results they can be ignored in the next macro run be commenting appropriate lines.  
